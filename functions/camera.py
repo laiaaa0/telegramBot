@@ -19,6 +19,7 @@ class CameraController():
             self.__camera = PiCamera()
             self.__camera.resolution = (600,600)
             self.__camera.framerate = 20
+            self.__camera.vflip = True
             # allow the camera to warmup
             time.sleep(0.1)
         except BaseException as e:
