@@ -12,7 +12,7 @@ buf = np.empty((frameCount, frameHeight, frameWidth, 3), np.dtype('uint8'))
 fc = 0
 ret = True
 
-while (fc < frameCount  and ret):
+while (fc < frameCount and ret):
     ret, buf[fc] = cap.read()
     fc += 1
 
