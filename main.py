@@ -1,9 +1,10 @@
 import telepot
 import time
-from setup import token, admin_id
+from setup import token, admin_id, valid_ids
 import functions.ip as ip
 import functions.quotes as quotes
 import functions.camera as camera
+import functions.webstreaming as streaming
 import sys
 import logging
 from datetime import datetime
@@ -17,6 +18,7 @@ class Handler():
         self.bot = telepot.Bot(token)
         self.cam = camera.CameraController()
         self.bot.message_loop(self.handle)
+        self.stream = streaming.PiStreamer()
 
     def command_from_text(self, text):
         args_list = text.split()
@@ -52,6 +54,18 @@ class Handler():
                 admin_id,
                 "New request submitted : " +
                 self.rest_of_message(chat_text))
+        elif command == '/on':
+            if chat_id in valid_ids:
+                self.stream.start()
+                external_ip = ip.get_external_ip()
+                response = f"Stream started in http://{external_ip}:8000/index.html"
+                self.bot.sendMessage(chat_id, response)
+
+        elif command == '/off':
+            if chat_id in valid_ids:
+                self.stream.stop()
+                self.stream.join()
+
         elif command == '/camera':
             filename = "output" + datetime.now().strftime("%Y%m%d_%H%M%S")
             self.bot.sendMessage(chat_id, "Getting camera frames...")
